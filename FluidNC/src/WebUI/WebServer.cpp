@@ -288,7 +288,10 @@ namespace WebUI {
                 return false;
             }
         }
-        if (download) {
+        // Only force download for non-html files
+        std::string ext = std::filesystem::path(path).extension().string();
+        bool download = !(ext == ".html" || ext == ".htm" || ext == ".css" || ext == ".js");
+        if (download && download) {
             _webserver->sendHeader("Content-Disposition", "attachment");
         }
         if (hash.length()) {
@@ -377,8 +380,10 @@ namespace WebUI {
             return;
         }
 
-        // Download a file.  The true forces a download instead of displaying the file
-        if (myStreamFile(path.c_str(), true)) {
+        // If the file is .html or .htm, serve it for display, otherwise force download
+        std::string ext = std::filesystem::path(path).extension().string();
+        bool download = (ext == ".html" || ext == ".htm" || ext == ".css" || ext == ".js");
+        if (myStreamFile(path.c_str(), download)) {
             return;
         }
 
