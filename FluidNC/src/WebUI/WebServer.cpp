@@ -288,7 +288,12 @@ namespace WebUI {
                 return false;
             }
         }
-        if (download) {
+        
+        // Only force download for non-html files
+        std::string ext = std::filesystem::path(path).extension().string();
+        bool nonHtmlFile = !(ext == ".html" || ext == ".htm" || ext == ".css" || ext == ".js");
+
+        if (download && nonHtmlFile) {
             _webserver->sendHeader("Content-Disposition", "attachment");
         }
         if (hash.length()) {
